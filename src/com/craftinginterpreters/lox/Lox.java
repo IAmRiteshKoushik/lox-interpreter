@@ -24,11 +24,15 @@ public class Lox {
     }
   }
   static boolean hadError = false;
+
+  // Setting up actual interpreter
   private static void runFile(String path) throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     run(new String(bytes, Charset.defaultCharset()));
     if (hadError) System.exit(65);
   }
+
+  // Setting up interactive prompt
   private static void runPrompt() throws IOException {
     InputStreamReader input = new InputStreamReader(System.in);
     BufferedReader reader = new BufferedReader(input);
@@ -45,12 +49,17 @@ public class Lox {
   private static void run(String source) {
     StringTokenizer tokens = new StringTokenizer(source);
 
-    // For now, just print the tokens.
+    // For now, printing out the input tokens.
     while(tokens.hasMoreTokens()){
       System.out.println(tokens.nextToken());
     }
   }
 
+  /* Writing functions to handle interpreter errors
+     where reporting is a separate function and string
+     manipulation can be done to improve the quality of
+     the error message
+  */
   static void error(int line, String message) {
     report(line, "", message);
   }
@@ -59,6 +68,4 @@ public class Lox {
     System.err.println("[line " + line + "] Error" + where + ": " + message);
     hadError = true;
   }
-
-
 }
