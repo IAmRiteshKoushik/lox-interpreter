@@ -7,8 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-
-import com.sun.org.apache.xpath.internal.compiler.Token;
+import java.util.StringTokenizer;
 
 public class Lox {
 
@@ -28,6 +27,9 @@ public class Lox {
   private static void runFile(String path) throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     run(new String(bytes, Charset.defaultCharset()));
+
+    // Exit if error (with error code)
+    if(hadError) System.exit(65);
   }
 
   // Interactive running of prompt
@@ -40,14 +42,17 @@ public class Lox {
       String line = reader.readLine();
       if (line == null) break;
       run(line);
+
+      hadError = false; // Resetting this error in interactive loop
+      // One prompt can have some error and fail to run but the program
+      // cannot fail completely. The next prompt should run normally
+      // for which the hadError flag has to be cleared.
+      
     }
   }
 
   private static void run(String source){
-    Scanner scannr = new Scanner(source);
-    List<Token> tokens = scanner.scanTokens();
 
-    // For now, we just print out the tokens
     for (Token token: tokens){
       System.out.println(token);
     }
